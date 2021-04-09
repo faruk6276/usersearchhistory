@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+</head>
+
+<body>
+  <div class="filter">
+    <h1>Select Keywords</h1>
+    <div class="keywords">
+     {% for k,v in total_keywords.items %}
+     <div class="checkbox">
+     <label><input type="checkbox" rel="{{k}}" onchange="change();"/>{{k}}({{v}}items found)</label>
+     </div>
+  {% endfor %}
+    </div>
+   
+    <h1>Select User</h1>
+    <div class="users">
+      {% for k in users %}
+     <div class="checkbox">
+     <label><input type="checkbox" rel="{{k}}" onchange="change();"/>{{k}}</label>
+     </div>
+  {% endfor %}
+    </div>
+
+    <h1>TIme Range</h1>
+    <div class="time_range">
+     <div class="checkbox">
+     <label><input type="checkbox" rel="yesterday" onchange="datechange();"/>Yesterday</label>
+     </div>
+     <div class="checkbox">
+     <label><input type="checkbox" rel="lst_week" onchange="change();"/>Last week</label>
+     </div>
+     <div class="checkbox">
+     <label><input type="checkbox" rel="lst_month" onchange="change();"/>Last Month</label>
+     </div>
+    </div>
+  </div>
+
+  <div class="result">
+        {% for value in total_data %}
+        <script type="text/javascript">
+        //var selected_date = new Date("{{ value.search_date }}");
+       //console.log(selected_date);
+        </script>
+        <div class="{{value.keywords }} {{value.user}}">
+        <h1>Keyword:{{value.keywords}}</h1>
+        <h1>User:{{value.user}}</h1>
+        <h1>Search Date:</h1><h1 class="search_date">{{value.search_date}}</h1>
+        <h1>Search TIme:{{value.search_time}}</h1>
+        <br>
+        </div>
+        {% endfor %}
+   
+    
+  </div>
+</body>
+<script>
+function datechange(){
+  var w_date=document.querySelectorAll(".time_range input[type='checkbox']");
+  var selected=getClassOfCheckedCheckboxes(w_date);
+  if (selected=='yesterday'){
+    const t_date=new Date();
+    filterdate(t_date);
+  const y_date=t_date.getDate();
+  }
+}
+function filterdate(date){
+  var rEl = document.querySelectorAll(".result div .search_date");
+  var rElems = document.querySelectorAll(".result div");
+  var hiddenElems = [];
+
+  if (!rElems || rElems.length <= 0) {
+    return;
+  }
+
+  for (var i = 0; i < rElems.length; i++) {
+    var el = rElems[i];
+    var g_date=new Date(rEl[i].innerHTML);
+
+    if (rEl) {
+      var isHidden = true;
+        if (date.getDate() == g_date.getDate()) {
+          isHidden = false;
+          break;
+        }
+      
+
+      if (isHidden) {
+        hiddenElems.push(el);
+      }
+    }
+  }
+  for (var i = 0; i < rElems.length; i++) {
+    rElems[i].style.display = "block";
+  }
+
+  if (hiddenElems.length <= 0) {
+    return;
+  }
+
+  for (var i = 0; i < hiddenElems.length; i++) {
+    hiddenElems[i].style.display = "none";
+  }
+
+}
+</script>
+<script>
+function change() {
+  var keywordsCbs = document.querySelectorAll(".keywords input[type='checkbox']");
+  var usersCbs = document.querySelectorAll(".users input[type='checkbox']");
+  var filters = {
+    keywords: getClassOfCheckedCheckboxes(keywordsCbs),
+    users: getClassOfCheckedCheckboxes(usersCbs)
+  };
+
+  filterResults(filters);
+}
+
+function getClassOfCheckedCheckboxes(checkboxes) {
+  var classes = [];
+
+  if (checkboxes && checkboxes.length > 0) {
+    for (var i = 0; i < checkboxes.length; i++) {
+      var cb = checkboxes[i];
+
+      if (cb.checked) {
+        classes.push(cb.getAttribute("rel"));
+      }
+    }
+  }
+
+  return classes;
+}
+
+function filterResults(filters) {
+  var rElems = document.querySelectorAll(".result div");
+  //var rElems = document.querySelectorAll(".result div .search_date");
+  //console.log(rElems)
+  var hiddenElems = [];
+
+  if (!rElems || rElems.length <= 0) {
+    return;
+  }
+
+  for (var i = 0; i < rElems.length; i++) {
+    var el = rElems[i];
+
+    if (filters.keywords.length > 0) {
+      var isHidden = true;
+
+      for (var j = 0; j < filters.keywords.length; j++) {
+        var filter = filters.keywords[j];
+        if (el.classList.contains(filter)) {
+          isHidden = false;
+          break;
+        }
+      }
+
+      if (isHidden) {
+        hiddenElems.push(el);
+      }
+    }
+
+    if (filters.users.length > 0) {
+      var isHidden = true;
+
+      for (var j = 0; j < filters.users.length; j++) {
+        var filter = filters.users[j];
+
+        if (el.classList.contains(filter)) {
+          isHidden = false;
+          break;
+        }
+      }
+
+      if (isHidden) {
+        hiddenElems.push(el);
+      }
+    }
+  }
+
+  for (var i = 0; i < rElems.length; i++) {
+    rElems[i].style.display = "block";
+  }
+
+  if (hiddenElems.length <= 0) {
+    return;
+  }
+
+  for (var i = 0; i < hiddenElems.length; i++) {
+    hiddenElems[i].style.display = "none";
+  }
+}
+</script>
+</html>
