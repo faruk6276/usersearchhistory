@@ -13,4 +13,4 @@ def index(request):
     for value in total_data:
         if value.user not in u:
             u.add(value.user)
-    return render(request,'home1.html',{'total_data': total_data,'total_keywords':k,'users':u})
+    return render(request,'home.html',{'total_data': total_data,'total_keywords':k,'users':u})
