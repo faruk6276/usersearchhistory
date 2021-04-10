@@ -1,1 +1,1 @@
-web: gunicorn myproject.wsgi
+web: gunicorn user_search_history.wsgi
