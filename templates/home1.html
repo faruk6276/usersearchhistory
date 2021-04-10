@@ -39,12 +39,14 @@
     </div>
   </div>
 
+  <h1>Custom TIme Range</h1>
+<label>Start date: <input type=date id="start" required > </label>
+<label>End date: <input type=date id="end" required></label>
+<input type=submit  onclick="custom_date()">
+  </div>
+
   <div class="result">
         {% for value in total_data %}
-        <script type="text/javascript">
-        //var selected_date = new Date("{{ value.search_date }}");
-       //console.log(selected_date);
-        </script>
         <div class="{{value.keywords }} {{value.user}}">
         <h1>Keyword:{{value.keywords}}</h1>
         <h1>User:{{value.user}}</h1>
@@ -57,6 +59,14 @@
     
   </div>
 </body>
+<script>
+var start = document.getElementById('start');
+var end = document.getElementById('end');
+start.addEventListener('change', function() {
+    if (start.value)
+        end.min = start.value;
+}, false);
+</script>
 <script>
 function datechange(){
   var w_date=document.querySelectorAll(".time_range input[type='checkbox']");
@@ -80,6 +90,16 @@ function datechange(){
     filterdate(firstDay,lastDay);
   }
   
+}
+function custom_date(){
+let start_Date = document.getElementById('start');
+let end_date = document.getElementById('end');
+let star_tdate = new Date(start_Date.value);
+let en_ddate= new Date(end_date.value);
+if (!isNaN(star_tdate.getTime()) && !isNaN(en_ddate.getTime())){
+filterdate(star_tdate,en_ddate);
+}
+
 }
 function filterdate(startdate,enddate){
   var rEl = document.querySelectorAll(".result div .search_date");
