@@ -31,10 +31,10 @@
      <label><input type="checkbox" rel="yesterday" onchange="datechange();"/>Yesterday</label>
      </div>
      <div class="checkbox">
-     <label><input type="checkbox" rel="lst_week" onchange="change();"/>Last week</label>
+     <label><input type="checkbox" rel="lst_week" onchange="datechange();"/>Last week</label>
      </div>
      <div class="checkbox">
-     <label><input type="checkbox" rel="lst_month" onchange="change();"/>Last Month</label>
+     <label><input type="checkbox" rel="lst_month" onchange="datechange();"/>Last Month</label>
      </div>
     </div>
   </div>
@@ -62,12 +62,26 @@ function datechange(){
   var w_date=document.querySelectorAll(".time_range input[type='checkbox']");
   var selected=getClassOfCheckedCheckboxes(w_date);
   if (selected=='yesterday'){
-    const t_date=new Date();
-    filterdate(t_date);
-  const y_date=t_date.getDate();
+    const t_date=new Date(new Date().getFullYear(),new Date().getMonth() , new Date().getDate()-1);
+    filterdate(t_date,t_date);
   }
+  else if (selected=='lst_week'){
+    var d = new Date();
+    var to = d.setTime(d.getTime() - (d.getDay() ? d.getDay() : 7) * 24 * 60 * 60 * 1000);
+    var from = d.setTime(d.getTime() - 6 * 24 * 60 * 60 * 1000);
+    var startdate=new Date(to);
+    var enddate=new Date(from);
+    filterdate(startdate,enddate);
+  }
+  else if (selected=='lst_month'){
+    var date = new Date();
+    var firstDay = new Date(date.getFullYear(), date.getMonth()-1, 1);
+    var lastDay = new Date(date.getFullYear(), date.getMonth(), 0);
+    filterdate(firstDay,lastDay);
+  }
+  
 }
-function filterdate(date){
+function filterdate(startdate,enddate){
   var rEl = document.querySelectorAll(".result div .search_date");
   var rElems = document.querySelectorAll(".result div");
   var hiddenElems = [];
@@ -78,11 +92,16 @@ function filterdate(date){
 
   for (var i = 0; i < rElems.length; i++) {
     var el = rElems[i];
+    console.log(el);
     var g_date=new Date(rEl[i].innerHTML);
+    var c_date=g_date.setHours(0,0,0,0);
+    var st=startdate.setHours(0,0,0,0);
+    var en=enddate.setHours(0,0,0,0);
+    console.log(c_date>=st && c_date<=en);
 
     if (rEl) {
       var isHidden = true;
-        if (date.getDate() == g_date.getDate()) {
+        if (c_date>=st && c_date<=en) {
           isHidden = false;
           break;
         }
@@ -137,8 +156,6 @@ function getClassOfCheckedCheckboxes(checkboxes) {
 
 function filterResults(filters) {
   var rElems = document.querySelectorAll(".result div");
-  //var rElems = document.querySelectorAll(".result div .search_date");
-  //console.log(rElems)
   var hiddenElems = [];
 
   if (!rElems || rElems.length <= 0) {
